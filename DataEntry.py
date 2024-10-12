@@ -24,11 +24,29 @@ def enter_data():
             print("Age: ", age, "Nationality: ", nationality)
             print("Courses: ", course, "Semesters: ", semester)
             print("------------------------------------------")
+        
+            # make connection with sqlite3
+            conn = sqlite3.connect('data.db') # .db means like .py
+
+            table_create_query = '''CREATE TABLE IF NOT EXISTS Student_Data
+                        (firstname TEXT, lastname TEXT, title TEXT, age INT, nationality TEXT,
+                        registration_status TEXT, course INT, semester INT)
+            '''
+            conn.execute(table_create_query)
+
+            data_insert_query = '''INSERT INTO Student_Data 
+            (firstname, lastname, title, age, nationality, registration_status, course, semester) VALUES
+            (?, ?, ?, ?, ?, ?, ?, ?)'''
+            data_insert_tuple = (firstname, lastname, title, age, nationality, registered_status, course, semester)
+            # why not just write it in the '?', because those are strings and wouldnt be able to access through the variables
+            cursor = conn.cursor()  #processess between the sqlite and database. exe queries and inserts.
+            cursor.execute(data_insert_query, data_insert_tuple) # exe query and puts the tuples 
+            conn.commit()   # imp
+            conn.close()        #create and close
         else:
             tkinter.messagebox.showwarning(title="Error", message="first name and last name required.")
     else:
         tkinter.messagebox.showwarning(title="Error", message="You have not accepted the terms.")
-
 window = tkinter.Tk()
 window.title("Data Entry Form")
 
