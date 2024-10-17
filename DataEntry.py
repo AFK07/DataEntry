@@ -19,6 +19,7 @@ def check_inputs():
 
 def enter_data():
     accepted = accept_var.get()
+    # the terms and conditions is the primary checkbox that needs to be approved by the user. Else, the data will not be processed
 
     if accepted == "Accepted":
         firstname = first_name_entry.get()
@@ -40,21 +41,23 @@ def enter_data():
         
             # Make connection with sqlite3
             conn = sqlite3.connect('data.db')  # .db means like .py
-
+            # this creates the the Student_Data table in the db browser SQLite database if there is no existing table. 
+            # Else, restarting the program will continue storing it in
             table_create_query = '''CREATE TABLE IF NOT EXISTS Student_Data
                         (firstname TEXT, lastname TEXT, title TEXT, age INT, nationality TEXT,
                         registration_status TEXT, course INT, semester INT)
             '''
-            conn.execute(table_create_query)
+            # 
+            conn.execute(table_create_query)    #fetches data from the database
 
             data_insert_query = '''INSERT INTO Student_Data 
             (firstname, lastname, title, age, nationality, registration_status, course, semester) VALUES
             (?, ?, ?, ?, ?, ?, ?, ?)'''
             data_insert_tuple = (firstname, lastname, title, age, nationality, registered_status, course, semester)
-            cursor = conn.cursor()  # processes between the sqlite and database. exe queries and inserts.
+            cursor = conn.cursor()  # processes between the sqlite and database. exe queries and inserts: replaces the ? with values
             cursor.execute(data_insert_query, data_insert_tuple)  # exe query and puts the tuples 
-            conn.commit()  # important
-            conn.close()  # create and close
+            conn.commit()  # important: saves any changes made during the current transaction to the database. Data processing cannot be authorised without this 
+            conn.close()  # create and close: ensures database resources are released properly
             reset_form()  # Call reset_form after entering data
         else:
             messagebox.showwarning(title="Error", message="First name and last name required.")
